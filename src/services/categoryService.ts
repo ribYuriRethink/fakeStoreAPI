@@ -30,7 +30,7 @@ const showByCategory = async (category: string) => {
 const insert = async (name: string) => {
   const existsCategory = await Repository.getCategory(name);
   if (existsCategory.length)
-    throw makeError({ message: "Categoria não existe!", status: 400 });
+    throw makeError({ message: "Categoria já existe!", status: 400 });
 
   const newCategory = { name };
   const id: number[] = await Repository.insertCategory(newCategory);
