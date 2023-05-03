@@ -1,3 +1,4 @@
+import { makeError } from "../middleware/errorHandler";
 import Repository from "../repository/Repositories";
 import { Product, makeProductOutput, Category } from "./function&types";
 
@@ -5,7 +6,8 @@ const index = async () => {
   const products: Product[] = await Repository.indexProducts();
   const structuredProducts: Product[] = makeProductOutput(products);
 
-  if (products.length === 0) throw new Error("O banco está vazio!");
+  if (products.length === 0)
+    throw makeError({ message: "O banco está vazio!", status: 400 });
 
   return structuredProducts;
 };
@@ -14,7 +16,8 @@ const show = async (id: number) => {
   const product: Product[] = await Repository.getProduct(id);
   const structuredProducts: Product[] = makeProductOutput(product);
 
-  if (structuredProducts.length === 0) throw new Error("Produto não existe!");
+  if (structuredProducts.length === 0)
+    throw makeError({ message: "Produto não existe!", status: 400 });
 
   return structuredProducts[0];
 };
@@ -24,7 +27,8 @@ const insert = async (product: Product) => {
     product.category
   );
 
-  if (!findCategory[0]) throw new Error("A categoria não existe!");
+  if (!findCategory[0])
+    throw makeError({ message: "Categoria não existe!", status: 400 });
 
   const categoryId: number | undefined = findCategory[0].id;
 
@@ -39,8 +43,12 @@ const insert = async (product: Product) => {
   try {
     const idInsertedProduct = await Repository.insertProduct(newProduct);
     return idInsertedProduct;
-  } catch (error) {
-    throw new Error("Não foi possível realizar a inserção");
+  } catch (error: any) {
+    throw makeError({
+      message: "Não foi possível inserir no banco!",
+      status: 500,
+      stack: error.stack,
+    });
   }
 };
 
@@ -49,7 +57,8 @@ const update = async (id: number, product: Product) => {
   if (product.category) {
     const findCategory = await Repository.getCategory(product.category);
 
-    if (!findCategory[0]) throw new Error("A categoria não existe!");
+    if (!findCategory[0])
+      throw makeError({ message: "Categoria não existe!", status: 400 });
 
     updatedProduct.category_id = findCategory[0].id;
     delete updatedProduct.category;
@@ -63,14 +72,15 @@ const update = async (id: number, product: Product) => {
   }
 
   const result = await Repository.updateProduct(id, updatedProduct);
-  if (!result) throw new Error("Esse produto não existe!");
+  if (!result) throw makeError({ message: "Produto não existe!", status: 400 });
 
   return result;
 };
 
 const remove = async (id: number) => {
   const product: number = await Repository.removeProduct(id);
-  if (!product) throw new Error("O produto não existe!");
+  if (!product)
+    throw makeError({ message: "Produto não existe!", status: 400 });
 };
 
 export default { index, show, insert, update, remove };
