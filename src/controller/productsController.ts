@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import knex from "knex";
-import config from "../../knexfile";
-import { Product, DatabaseProduct, makeProductOutput } from "./function&types";
+import { Product } from "../types/types";
 import productService from "../services/productService";
-
-const knexInstance = knex(config);
 
 const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const products = await productService.index();
+    const products: Product[] = await productService.index();
     res.status(200).send(products);
   } catch (error: any) {
     next(error);
@@ -18,7 +14,7 @@ const index = async (req: Request, res: Response, next: NextFunction) => {
 const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const product = await productService.show(parseInt(id));
+    const product: Product = await productService.show(parseInt(id));
     res.status(200).send(product);
   } catch (error: any) {
     next(error);
@@ -28,8 +24,8 @@ const show = async (req: Request, res: Response, next: NextFunction) => {
 const insert = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const product = req.body;
-    const newProductID = await productService.insert(product);
-    res.status(201).send({ id: newProductID[0], ...product });
+    const newProductID: number = await productService.insert(product);
+    res.status(201).send({ id: newProductID, ...product });
   } catch (error: any) {
     next(error);
   }

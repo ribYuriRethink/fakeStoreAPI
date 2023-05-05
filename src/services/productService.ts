@@ -1,6 +1,6 @@
 import { makeError } from "../middleware/errorHandler";
 import Repository from "../repository/Repositories";
-import { Product, makeProductOutput, Category } from "./function&types";
+import { Product, makeProductOutput, Category } from "../types/types";
 
 const index = async () => {
   const products: Product[] = await Repository.indexProducts();
@@ -41,8 +41,10 @@ const insert = async (product: Product) => {
   delete newProduct.category;
 
   try {
-    const idInsertedProduct = await Repository.insertProduct(newProduct);
-    return idInsertedProduct;
+    const idInsertedProduct: number[] = await Repository.insertProduct(
+      newProduct
+    );
+    return idInsertedProduct[0];
   } catch (error: any) {
     throw makeError({
       message: "Não foi possível inserir no banco!",
@@ -55,7 +57,9 @@ const insert = async (product: Product) => {
 const update = async (id: number, product: Product) => {
   const updatedProduct: any = { ...product };
   if (product.category) {
-    const findCategory = await Repository.getCategory(product.category);
+    const findCategory: Category[] = await Repository.getCategory(
+      product.category
+    );
 
     if (!findCategory[0])
       throw makeError({ message: "Categoria não existe!", status: 400 });
@@ -71,7 +75,7 @@ const update = async (id: number, product: Product) => {
     delete updatedProduct.category;
   }
 
-  const result = await Repository.updateProduct(id, updatedProduct);
+  const result: number = await Repository.updateProduct(id, updatedProduct);
   if (!result) throw makeError({ message: "Produto não existe!", status: 400 });
 
   return result;

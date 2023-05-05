@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import knex from "knex";
-import config from "../../knexfile";
-import { Category, Product, makeProductOutput } from "./function&types";
+import { Product } from "../types/types";
 import categoryService from "../services/categoryService";
-
-const knexInstance = knex(config);
 
 const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const allCategories: Category[] = await categoryService.index();
+    const allCategories: string[] = await categoryService.index();
     res.status(200).send(allCategories);
   } catch (error: any) {
     next(error);
@@ -18,7 +14,9 @@ const index = async (req: Request, res: Response, next: NextFunction) => {
 const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const name: string = req.params.name;
-    const productsByCategorie = await categoryService.showByCategory(name);
+    const productsByCategorie: Product[] = await categoryService.showByCategory(
+      name
+    );
     res.status(200).send(productsByCategorie);
   } catch (error: any) {
     next(error);

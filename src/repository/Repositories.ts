@@ -1,6 +1,6 @@
 import knex from "knex";
 import config from "../../knexfile";
-import { DatabaseProduct } from "../services/function&types";
+import { DatabaseProduct } from "../types/types";
 
 const knexInstance = knex(config);
 
