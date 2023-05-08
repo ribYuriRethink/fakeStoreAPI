@@ -44,6 +44,12 @@ const updateCategory = (id: number, newName: string) =>
 const removeCategory = (id: number) =>
   knexInstance("categories").delete().where({ id });
 
+const getUser = (username: string) =>
+  knexInstance("user").select("*").where({ name: username });
+
+const createNewUser = (username: string, password: string) =>
+  knexInstance("user").insert({ name: username, password });
+
 export default {
   indexProducts,
   getProduct,
@@ -56,4 +62,6 @@ export default {
   insertCategory,
   updateCategory,
   removeCategory,
+  getUser,
+  createNewUser,
 };
