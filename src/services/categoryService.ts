@@ -36,12 +36,16 @@ const update = async (id: number, newName: string) => {
   const result: number = await Repository.updateCategory(id, newName);
   if (!result)
     throw makeError({ message: "Categoria não existe!", status: 400 });
+
+  return result;
 };
 
 const remove = async (id: number) => {
-  const category: number = await Repository.removeCategory(id);
-  if (!category)
+  const result: number = await Repository.removeCategory(id);
+  if (!result)
     throw makeError({ message: "Categoria não existe!", status: 400 });
+
+  return result;
 };
 
 export default { index, showByCategory, insert, update, remove };
