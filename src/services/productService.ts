@@ -85,6 +85,8 @@ const remove = async (id: number) => {
   const product: number = await Repository.removeProduct(id);
   if (!product)
     throw makeError({ message: "Produto não existe!", status: 400 });
+
+  return product;
 };
 
 export default { index, show, insert, update, remove };
