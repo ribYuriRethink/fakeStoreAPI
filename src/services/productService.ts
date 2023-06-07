@@ -2,13 +2,21 @@ import { makeError } from "../middleware/errorHandler";
 import Repository from "../repository/Repositories";
 import { Product, makeProductOutput, Category } from "../types/types";
 
-const index = async () => {
-  const products: Product[] = await Repository.indexProducts();
-  const structuredProducts: Product[] = makeProductOutput(products);
-
+const index = async (orderBy: any) => {
+  const products: Product[] = await Repository.indexProducts(orderBy);
   if (products.length === 0)
     throw makeError({ message: "O banco está vazio!", status: 400 });
 
+  const structuredProducts: Product[] = makeProductOutput(products);
+  return structuredProducts;
+};
+
+const search = async (query: any) => {
+  const searchQuery = query ? query : " ";
+  const products: Product[] = await Repository.searchProductsByTitle(
+    searchQuery
+  );
+  const structuredProducts: Product[] = makeProductOutput(products);
   return structuredProducts;
 };
 
@@ -89,4 +97,4 @@ const remove = async (id: number) => {
   return product;
 };
 
-export default { index, show, insert, update, remove };
+export default { index, search, show, insert, update, remove };

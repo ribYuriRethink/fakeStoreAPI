@@ -4,10 +4,20 @@ import { DatabaseProduct } from "../types/types";
 
 const knexInstance = knex(config);
 
-const indexProducts = () =>
+const indexProducts = (orderBy: any) =>
   knexInstance("products")
     .select("*", "products.id as id", "categories.id as categoryID")
-    .join("categories", "categories.id", "=", "products.category_id");
+    .join("categories", "categories.id", "=", "products.category_id")
+    .orderBy(
+      orderBy.column ? orderBy.column : "id",
+      orderBy.order ? orderBy.order : "asc"
+    );
+
+const searchProductsByTitle = (query: string) =>
+  knexInstance("products")
+    .select("*", "products.id as id", "categories.id as categoryID")
+    .join("categories", "categories.id", "=", "products.category_id")
+    .whereLike("title", `%${query.toLowerCase()}%`);
 
 const getProduct = (id: number) =>
   knexInstance("products")
@@ -52,6 +62,7 @@ const createNewUser = (username: string, password: string) =>
 
 export default {
   indexProducts,
+  searchProductsByTitle,
   getProduct,
   insertProduct,
   updateProduct,

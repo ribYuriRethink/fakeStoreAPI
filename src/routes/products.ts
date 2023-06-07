@@ -10,6 +10,7 @@ router.use("/categories", categories);
 router.use("/category", category);
 
 router.get("/", productsController.index);
+router.get("/search/", productsController.search);
 router.post(
   "/",
   tokenVerify,

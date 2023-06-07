@@ -4,7 +4,18 @@ import productService from "../services/productService";
 
 const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const products: Product[] = await productService.index();
+    const orderBy = req.query;
+    const products: Product[] = await productService.index(orderBy);
+    res.status(200).send(products);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+const search = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const query = req.query.query;
+    const products: Product[] = await productService.search(query);
     res.status(200).send(products);
   } catch (error: any) {
     next(error);
@@ -52,4 +63,4 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { index, insert, show, update, remove };
+export default { index, search, insert, show, update, remove };

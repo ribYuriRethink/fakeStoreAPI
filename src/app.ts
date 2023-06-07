@@ -2,12 +2,14 @@ import express from "express";
 import { router } from "./routes/index";
 import { errorHandler } from "./middleware/errorHandler";
 import * as dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (_req, res) => {
   res.send("API Fake fake strore");
